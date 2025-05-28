@@ -112,7 +112,11 @@ def prediction_to_user():
             pred = None
             models_list = ['KNN', 'Boosting', 'Bagging', 'Stacking', 'Catboost', 'FCNN']
             for m in models_list:
-                with open(f'models/{m.lower()}_model.pkl', 'rb') as file:
+                if m != 'Catboost':
+                    ext = 'pkl'
+                else:
+                    ext = 'cbm'
+                with open(f'models/{m.lower()}_model.{ext}', 'rb') as file:
                     model = pickle.load(file)
                     pred = model.predict([list_to_predict])
 
