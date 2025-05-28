@@ -1,6 +1,6 @@
 import streamlit as st
 import pickle
-from sklearn.neighbors import KNeighborsClassifier
+import catboost as cb
 
 trans_dict = {
     'yn': {'Да': True, 'Нет': False},
@@ -113,11 +113,12 @@ def prediction_to_user():
             models_list = ['KNN', 'Boosting', 'Bagging', 'Stacking', 'Catboost', 'FCNN']
             for m in models_list:
                 if m != 'Catboost':
-                    ext = 'pkl'
+                    with open(f'models/{m.lower()}_model.pkl', 'rb') as file:
+                        model = pickle.load(file)
+                        pred = model.predict([list_to_predict])
                 else:
-                    ext = 'cbm'
-                with open(f'models/{m.lower()}_model.{ext}', 'rb') as file:
-                    model = pickle.load(file)
+                    loaded_model = cb.CatBoostClassifier()
+                    loaded_model.load_model("models/catboost_model.cbm")
                     pred = model.predict([list_to_predict])
 
                 if pred[0] == 0:
